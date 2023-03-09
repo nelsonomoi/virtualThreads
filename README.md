@@ -16,6 +16,15 @@ Using virtual Threads to increase performance of a rabbit queueing system.
 
 **factory.setBatchSize(500)**; sets the batch size for the factory. This controls how many messages can be processed in a single batch.
 
+
+The line **factory.setTaskExecutor(Executors.newFixedThreadPool(50));** is important because it sets the TaskExecutor to be used by the SimpleRabbitListenerContainerFactory.
+
+The **TaskExecutor** is responsible for executing the actual message processing logic in a separate thread. By default, the **SimpleMessageListenerContainer** (which is created by the SimpleRabbitListenerContainerFactory) will use a SyncTaskExecutor which executes the message processing logic in the same thread that called the listener. This can lead to slow message processing, as the listener thread will be blocked until the message processing logic is complete.
+
+By setting a **TaskExecutor**, the message processing logic can be executed in a separate thread, allowing the listener thread to immediately return to the RabbitMQ broker to fetch more messages. This can help improve the overall throughput and responsiveness of the application.
+
+In this code snippet, the TaskExecutor is created using **Executors.newFixedThreadPool(50)**, which creates a fixed-size thread pool with 50 threads. This means that up to 50 messages can be processed concurrently. The actual number of concurrent messages being processed will depend on the concurrentConsumers and maxConcurrentConsumers settings of the **SimpleRabbitListenerContainerFactory**
+
 ### prefetch count
 Setting a prefetch count is important because it determines how many messages can be pre-fetched from the broker and held by the consumer before they are processed. This can help improve the efficiency of message consumption, as it allows the consumer to process messages more quickly without waiting for new messages to be fetched.
 
