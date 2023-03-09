@@ -1,0 +1,17 @@
+
+
+spring:
+  rabbitmq:
+    virtual-host: /
+    connection-timeout: 4000
+    requested-heartbeat: 30
+    template:
+      retry:
+        enabled: true
+        max-attempts: 3
+        initial-interval: 2000
+        multiplier: 1.5
+        max-interval: 10000
+    listener:
+      direct:
+        prefetch: 500
